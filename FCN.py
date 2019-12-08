@@ -27,9 +27,10 @@ def train(testRound):
     file = open('fcn_round.txt', 'r+')
     r = int(file.read())
     net = Net()
-    #net.load_state_dict(torch.load('./cifar_net_fcn.pth'))  # load trained result
+    net.load_state_dict(torch.load('./cifar_net_fcn.pth'))  # load trained result
     criterion = nn.CrossEntropyLoss()  # Loss Function
     optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)  # Optimizer
+    lossFile = open('fcn_loss.txt', 'a')
     for epoch in range(testRound):
         r += 1
         running_loss = 0.0
@@ -42,8 +43,11 @@ def train(testRound):
             optimizer.step()
             running_loss += loss.item()
             if i % 100 == 99:
-                print('[%d, %5d] loss: %.3f' % (epoch + r, i + 1, running_loss / 100))
+                lossFile.write('[%d, %5d] loss: %.3f' % (epoch + r, i + 1, running_loss / 100))
+                # print('[%d, %5d] loss: %.3f' % (epoch + r, i + 1, running_loss / 100))
+                lossFile.write('\n')
                 running_loss = 0.0
+    lossFile.close()
     print('[%d round]: Finished Training' % r)
     file.seek(0)
     file.write(str(r))
@@ -74,9 +78,19 @@ def test():
                 label = labels[i]
                 class_correct[label] += c[i].item()
                 class_total[label] += 1
-    print('[%d round]: Accuracy of the network on the 10000 test images: %d %%' % (r, 100 * correct / total))
+    file = open('fcn/accuracy.txt', 'a')
+    file.write('%d %%' % (100 * correct / total))
+    file.write('\n')
+    file.close()
+    # print('[%d round]: Accuracy of the network on the 10000 test images: %d %%' % (r, 100 * correct / total))
     for i in range(10):
-        print('[%d round]: Accuracy of %5s : %2d %%' % (r, classes[i], 100 * class_correct[i] / class_total[i]))
+        fileName = 'fcn/accuracy_' + str(i) + '.txt'
+        file = open(fileName, 'a')
+        file.write('%d %%' % (100 * class_correct[i] / class_total[i]))
+        file.write('\n')
+        file.close()
+        # print('[%d round]: Accuracy of %5s : %2d %%' % (r, classes[i], 100 * class_correct[i] / class_total[i]))
+    print('Finished Testing')
 
 
 if __name__ == '__main__':
