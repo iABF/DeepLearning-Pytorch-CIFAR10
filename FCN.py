@@ -94,6 +94,6 @@ def test():
 
 
 if __name__ == '__main__':
-    for _ in range(1):
+    for _ in range(1000):
         train(1)
         test()
