@@ -3,6 +3,7 @@ import torchvision
 import torchvision.transforms as transforms
 import torch.nn as nn
 import torch.optim as optim
+import torch.nn.functional as F
 
 transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 trainSet = torchvision.datasets.CIFAR10(root='./data', train=True, download=False, transform=transform)
@@ -15,15 +16,25 @@ classes = ('plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship'
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.fc = nn.Linear(32 * 32 * 3, 10)
+        self.fc1 = nn.Linear(32 * 32 * 3, 32 * 32)
+        self.fc2 = nn.Linear(32 * 32, 256)
+        self.fc3 = nn.Linear(256, 144)
+        self.fc4 = nn.Linear(144, 64)
+        self.fc5 = nn.Linear(64, 32)
+        self.fc6 = nn.Linear(32, 10)
 
     def forward(self, x):
         x = x.view(x.size(0), -1)
-        x = self.fc(x)
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        x = F.relu(self.fc3(x))
+        x = F.relu(self.fc4(x))
+        x = F.relu(self.fc5(x))
+        x = self.fc6(x)
         return x
 
 
-def train(testRound):
+def train():
     file = open('fcn_round.txt', 'r+')
     r = int(file.read())
     net = Net()
@@ -31,7 +42,7 @@ def train(testRound):
     criterion = nn.CrossEntropyLoss()  # Loss Function
     optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)  # Optimizer
     lossFile = open('fcn_loss.txt', 'a')
-    for epoch in range(testRound):
+    for epoch in range(1):
         r += 1
         running_loss = 0.0
         for i, data in enumerate(trainLoader, 0):
@@ -90,10 +101,10 @@ def test():
         file.write('\n')
         file.close()
         # print('[%d round]: Accuracy of %5s : %2d %%' % (r, classes[i], 100 * class_correct[i] / class_total[i]))
-    print('Finished Testing')
+    print('[%d round]: Finished Testing' % r)
 
 
 if __name__ == '__main__':
-    for _ in range(1000):
-        train(1)
+    for _ in range(20):
+        train()
         test()

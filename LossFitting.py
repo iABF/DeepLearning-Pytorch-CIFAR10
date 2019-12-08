@@ -35,7 +35,6 @@ def fcn_loss():
     file.close()
     data = []
     for line in lines[:-1]:
-        print(line[-5:])
         data.append(float(line[-5:]))
     plt.plot(data)
     plt.xlabel('Train Number (400 pictures each)')
@@ -45,4 +44,4 @@ def fcn_loss():
 
 
 if __name__ == '__main__':
-    fcn_loss()
+    rnn_loss()
