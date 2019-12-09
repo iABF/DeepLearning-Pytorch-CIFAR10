@@ -44,4 +44,4 @@ def fcn_loss():
 
 
 if __name__ == '__main__':
-    rnn_loss()
+    fcn_loss()
