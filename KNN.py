@@ -2,6 +2,7 @@ import numpy as np
 import torch
 import torchvision
 import torchvision.transforms as transforms
+import time
 
 transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 trainSet = torchvision.datasets.CIFAR10(root='./data', train=True, download=False, transform=transform)
@@ -62,6 +63,8 @@ def test(machine):
 
 
 if __name__ == '__main__':
+    localtime = time.asctime(time.localtime(time.time()))
+    print(localtime)
     Machine = None
     for trainData in trainLoader:
         trainImages, trainLabels = trainData
@@ -72,5 +75,10 @@ if __name__ == '__main__':
         break
     for K in range(1, 21):
         print('Round %d start' % K)
+        localtime = time.asctime(time.localtime(time.time()))
+        print(localtime)
         Machine.set_k(K)
         test(Machine)
+    print('Finished')
+    localtime = time.asctime(time.localtime(time.time()))
+    print(localtime)

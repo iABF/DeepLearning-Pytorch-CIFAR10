@@ -16,5 +16,5 @@
         * Round: 46
 * Other Machine Learning Algorithms
     * KNN
-        * Accuracy: 33%
-        * K: 10
+        * Accuracy: 35%
+        * K: 1
