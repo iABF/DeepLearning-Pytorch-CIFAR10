@@ -2,7 +2,6 @@ import numpy as np
 import torch
 import torchvision
 import torchvision.transforms as transforms
-import time
 
 transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 trainSet = torchvision.datasets.CIFAR10(root='./data', train=True, download=False, transform=transform)
@@ -42,8 +41,8 @@ class KNN(object):
 def test(machine):
     correct = 0
     total = 0
-    class_correct = list(0. for i in range(10))
-    class_total = list(0. for i in range(10))
+    class_correct = list(0. for _ in range(10))
+    class_total = list(0. for _ in range(10))
     with torch.no_grad():
         for data in testLoader:
             images, labels = data
@@ -63,22 +62,12 @@ def test(machine):
 
 
 if __name__ == '__main__':
-    localtime = time.asctime(time.localtime(time.time()))
-    print(localtime)
     Machine = None
     for trainData in trainLoader:
         trainImages, trainLabels = trainData
         Machine = KNN(
             trainImages.numpy().reshape(trainImages.shape[0], 32 * 32 * 3),
             trainLabels.numpy(),
-            10)
+            30)
         break
-    for K in range(1, 21):
-        print('Round %d start' % K)
-        localtime = time.asctime(time.localtime(time.time()))
-        print(localtime)
-        Machine.set_k(K)
-        test(Machine)
-    print('Finished')
-    localtime = time.asctime(time.localtime(time.time()))
-    print(localtime)
+    test(Machine)
